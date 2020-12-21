@@ -5,6 +5,8 @@ using System.Web;
 using InventariosPJEH.CNegocios;
 using System.Data.SqlClient;
 using System.Data;
+using InventariosPJEH.CAccesoDatos;
+
 
 namespace InventariosPJEH.CAccesoDatos
 {
@@ -12,10 +14,12 @@ namespace InventariosPJEH.CAccesoDatos
     {
 
         private static string error;
-        public static List<CActaAdmin> MostrarBusqueda(long IdResguardo)
+        public static Dictionary<CDatosResguardante, List<CDatosBienesActa>> MostrarBusqueda(long IdResguardo)
         {
 
-            List<CActaAdmin> lista = new List<CActaAdmin>();
+
+            CComparatorResguardante cComparatorResguardante = new CComparatorResguardante();
+            Dictionary<CDatosResguardante, List<CDatosBienesActa>> resultadoDatos = new Dictionary<CDatosResguardante, List<CDatosBienesActa>>(cComparatorResguardante);            
             SqlConnection cnn = new SqlConnection(CConexion.Obtener());
 
 
@@ -24,22 +28,40 @@ namespace InventariosPJEH.CAccesoDatos
 
                 cnn.Open();
 
-                SqlCommand cmd = new SqlCommand("SELECT dEmpleado, Nombre, UniAdmin, Cargo, IdResguardo, Actividad, NumInventario, DescripcionBien, Marca, Modelo, Serie, TipoPartida FROM  Vta_buscarNolocalizados = @IdResguardo  ", cnn);
+                SqlCommand cmd = new SqlCommand("SELECT IdEmpleado, Nombre, UniAdmin, Cargo, IdResguardo, Actividad, NumInventario, DescripcionBien, Marca, Modelo, Serie, TipoPartida FROM Vta_buscarNolocalizados WHERE IdResguardo = @IdResguardo  ", cnn);
 
                 cmd.Parameters.Add("@IdResguardo", SqlDbType.BigInt).Value = IdResguardo;
-
+                
                 using (var rd = cmd.ExecuteReader())
                 {
                     while (rd.Read())
                     {
-                        CActaAdmin cActa = new CActaAdmin();
+                        CDatosResguardante datosResguardante = new CDatosResguardante();
+                        CDatosBienesActa cDatosBienActa = new CDatosBienesActa();                        
 
-                        cActa.TxtFiltroB = BdConverter.FieldToInt64(rd["IdResguardo"]);
-                        cActa.TxtNombreRes = rd["Nombre"].ToString();
-                        cActa.UTxtAreaAdri = rd["UniAdmin"].ToString();
-                        cActa.TxTCatgoR = rd["Cargo"].ToString();
+                        datosResguardante.txtONombreResguardante = rd["Nombre"].ToString();
+                        datosResguardante.txtOAreaAdscripcionResguardo = rd["UniAdmin"].ToString();
+                        datosResguardante.txtOCargoResguardo = rd["Cargo"].ToString();
 
-                        lista.Add(cActa);
+                        cDatosBienActa.txtOInventarioResguardo = rd["NumInventario"].ToString();
+                        cDatosBienActa.txtONombreBienResguardo = rd["DescripcionBien"].ToString();
+                        cDatosBienActa.txtOMarcaResguardo = rd["Marca"].ToString();
+                        cDatosBienActa.txtOModeloResguardo= rd["Modelo"].ToString();
+                        cDatosBienActa.txtOSerieResguardo = rd["Serie"].ToString();
+
+                        List<CDatosBienesActa> listaBienesResult = new List<CDatosBienesActa>();
+
+                        if (resultadoDatos.TryGetValue(datosResguardante, out listaBienesResult))
+                        {
+                            listaBienesResult.Add(cDatosBienActa);
+                        }
+                        else
+                        {
+                            List<CDatosBienesActa> listaBienes = new List<CDatosBienesActa>();
+                            listaBienes.Add(cDatosBienActa);
+                            resultadoDatos.Add(datosResguardante, listaBienes);
+                        }
+                                                
                     }
                 }
             }
@@ -47,9 +69,10 @@ namespace InventariosPJEH.CAccesoDatos
 
             {
                 error = e.Message;
+                Console.WriteLine(e.ToString());
                 cnn.Close();
             }
-            return lista;
+            return resultadoDatos;
 
         }
 

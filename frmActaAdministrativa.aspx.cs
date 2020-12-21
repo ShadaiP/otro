@@ -20,7 +20,7 @@ namespace InventariosPJEH
 
         protected void BtnGenerarA_CheckedChanged(object sender, EventArgs e)
         {
-            DivGeneral.Visible = false;
+            DivTablaResultadosResguardo.Visible = false;
             RadioButton RadioSeleccionado = sender as RadioButton;
 
             if (RadioSeleccionado.ID == "BtnGenerarA")
@@ -48,8 +48,23 @@ namespace InventariosPJEH
             }
             else
             {
+                Dictionary<CDatosResguardante, List<CDatosBienesActa>> resBusqueda = MostrarFiltro();
+                DivTablaResultadosResguardo.Visible = true;
+                foreach (KeyValuePair<CDatosResguardante, List<CDatosBienesActa>> entry in resBusqueda)
+                {
+                    // do something with entry.Value or entry.Key
+                    lblNombreResul.Text = entry.Key.txtONombreResguardante;
+                    lblCargoResul.Text = entry.Key.txtOCargoResguardo;
+                    lblAreaResul.Text = entry.Key.txtOAreaAdscripcionResguardo;
+                    gridResultados.DataSource = entry.Value;
+                    gridResultados.DataBind();
 
-                MostrarFiltro();
+                    if (gridResultados.Rows.Count == 0)
+                    {
+                        MostrarMensaje("** No existen datos con la búsqueda solicitada **", "error", "Normal", "Incorrecto");
+                    }
+                }
+              
             }
 
         }
@@ -81,10 +96,10 @@ namespace InventariosPJEH
             ScriptManager.RegisterClientScriptBlock(this, this.GetType(), ClaveMsj, Msj, true);
         }
 
-        public void MostrarFiltro()
+        public Dictionary<CDatosResguardante, List<CDatosBienesActa>> MostrarFiltro()
         {
-            List<CActaAdmin> MostrarInfo = BdActaAdmin.MostrarBusqueda(Convert.ToInt64(TxtFiltroB.Text));
-
+            Dictionary<CDatosResguardante, List<CDatosBienesActa>> lstActaAdmin = BdActaAdmin.MostrarBusqueda(Convert.ToInt64(TxtFiltroB.Text));
+            return lstActaAdmin;
             //GridHistorial.DataSource = HistorialBienes;
             //GridHistorial.DataBind();
 
