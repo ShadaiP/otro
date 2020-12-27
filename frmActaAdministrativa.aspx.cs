@@ -50,20 +50,32 @@ namespace InventariosPJEH
             {
                 Dictionary<CDatosResguardante, List<CDatosBienesActa>> resBusqueda = MostrarFiltro();
                 DivTablaResultadosResguardo.Visible = true;
-                foreach (KeyValuePair<CDatosResguardante, List<CDatosBienesActa>> entry in resBusqueda)
+                if(resBusqueda.Count > 0)
                 {
-                    // do something with entry.Value or entry.Key
-                    lblNombreResul.Text = entry.Key.txtONombreResguardante;
-                    lblCargoResul.Text = entry.Key.txtOCargoResguardo;
-                    lblAreaResul.Text = entry.Key.txtOAreaAdscripcionResguardo;
-                    gridResultados.DataSource = entry.Value;
-                    gridResultados.DataBind();
-
-                    if (gridResultados.Rows.Count == 0)
+                    sectionBienes.Visible = true;
+                    foreach (KeyValuePair<CDatosResguardante, List<CDatosBienesActa>> entry in resBusqueda)
                     {
-                        MostrarMensaje("** No existen datos con la búsqueda solicitada **", "error", "Normal", "Incorrecto");
+                        // do something with entry.Value or entry.Key
+                        lblNombreResul.Text = entry.Key.txtONombreResguardante;
+                        lblCargoResul.Text = entry.Key.txtOCargoResguardo;
+                        lblAreaResul.Text = entry.Key.txtOAreaAdscripcionResguardo;
+                        lblIdResguardo.Text = entry.Key.idResguardo.ToString();
+                        lblIdUniAdmin.Text = entry.Key.idAreaAdscrip.ToString();
+                        gridResultados.DataSource = entry.Value;
+                        gridResultados.DataBind();
+                        sectionGuardarActa.Visible = true;
+                        if (gridResultados.Rows.Count == 0)
+                        {
+                            MostrarMensaje("** No existen datos con la búsqueda solicitada **", "error", "Normal", "Incorrecto");
+                        }                        
                     }
                 }
+                else
+                {
+                    sectionBienes.Visible = false;
+                    MostrarMensaje("** No existen datos con la búsqueda solicitada **", "error", "Normal", "Incorrecto");
+                }
+                
               
             }
 
@@ -100,14 +112,51 @@ namespace InventariosPJEH
         {
             Dictionary<CDatosResguardante, List<CDatosBienesActa>> lstActaAdmin = BdActaAdmin.MostrarBusqueda(Convert.ToInt64(TxtFiltroB.Text));
             return lstActaAdmin;
-            //GridHistorial.DataSource = HistorialBienes;
-            //GridHistorial.DataBind();
+        }
 
-            //if (HistorialBienes.Count == 0 || HistorialBienes == null)
+        public void limpiarCampos()
+        {
+            lblNombreResul.Text = "";
+            lblCargoResul.Text = "";
+            lblAreaResul.Text = "";
+            lblIdResguardo.Text = "";
+            lblIdUniAdmin.Text = "";
+            txtNumActa.Text = "";
+            txtFechaAdquisicion.Text = "";
+            TxtFiltroB.Text = "";
+            gridResultados.DataSource = null;
+            gridResultados.DataBind();
+            sectionBienes.Visible = false;
+        }
 
-            //    MostrarMensaje("** No existen datos  **", "error", "Normal", "Incorrecto");
-            //else
-            //    DivMostrar.Visible = true;
+        protected void BtnGuardarActa_Click(object sender, EventArgs e)
+        {
+            //Capturamos los errores con try catch
+            try
+            {
+                if(!BdActaAdmin.InsertarActa(int.Parse(lblIdUniAdmin.Text), int.Parse(lblIdResguardo.Text), txtNumActa.Text, txtFechaAdquisicion.Text))
+                {
+                    MostrarMensaje("** Error en Base de Datos **", "error", "Normal", "Incorrecto");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        protected void BtnCancelar_Click(object sender, EventArgs e)
+        {
+            //Capturamos los errores con try catch
+            try
+            {
+                limpiarCampos();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
     }

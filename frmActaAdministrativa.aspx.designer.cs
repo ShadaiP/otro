@@ -78,6 +78,15 @@ namespace InventariosPJEH
         protected global::System.Web.UI.WebControls.Button BtnFiltroB;
 
         /// <summary>
+        /// Control sectionBienes.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl sectionBienes;
+
+        /// <summary>
         /// Control lblNombreR.
         /// </summary>
         /// <remarks>
@@ -132,6 +141,24 @@ namespace InventariosPJEH
         protected global::System.Web.UI.WebControls.Label lblAreaResul;
 
         /// <summary>
+        /// Control lblIdResguardo.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblIdResguardo;
+
+        /// <summary>
+        /// Control lblIdUniAdmin.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblIdUniAdmin;
+
+        /// <summary>
         /// Control DivTablaResultadosResguardo.
         /// </summary>
         /// <remarks>
@@ -148,6 +175,15 @@ namespace InventariosPJEH
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gridResultados;
+
+        /// <summary>
+        /// Control sectionGuardarActa.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl sectionGuardarActa;
 
         /// <summary>
         /// Control lblNumActa.
@@ -168,30 +204,57 @@ namespace InventariosPJEH
         protected global::System.Web.UI.WebControls.TextBox txtNumActa;
 
         /// <summary>
-        /// Control lblFechaActa.
+        /// Control LablFechaAdquisicion.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblFechaActa;
+        protected global::System.Web.UI.WebControls.Label LablFechaAdquisicion;
 
         /// <summary>
-        /// Control dateFechaActa.
+        /// Control txtFechaAdquisicion.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox dateFechaActa;
+        protected global::System.Web.UI.WebControls.TextBox txtFechaAdquisicion;
 
         /// <summary>
-        /// Control Button1.
+        /// Control ImgFechaAdquisicion.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button1;
+        protected global::System.Web.UI.WebControls.Image ImgFechaAdquisicion;
+
+        /// <summary>
+        /// Control FechaAdquisicion.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::AjaxControlToolkit.CalendarExtender FechaAdquisicion;
+
+        /// <summary>
+        /// Control BtnGuardarActa.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button BtnGuardarActa;
+
+        /// <summary>
+        /// Control BtnCancelarr.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button BtnCancelarr;
     }
 }

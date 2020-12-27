@@ -8,6 +8,10 @@ namespace InventariosPJEH.CNegocios
     public class CDatosResguardante
     {
         public int intOIdEmpleado { get; set; }
+
+        public int idResguardo { get; set; }
+
+        public int idAreaAdscrip { get; set; }
         
         public String txtONombreResguardante { get; set; }
 
