@@ -30,7 +30,7 @@ namespace InventariosPJEH
         public void MostrarHistorialPersonal()
         {
              
-            List<CHistoricoPersonal> cHistorico = BdHistoricoPersonal.MostrarHistorialPersonal(TxtNomP.Text,TextAM.Text, TextAP.Text);
+            List<CHistoricoPersonal> cHistorico = BdHistoricoPersonal.MostrarHistorialPersonal(TxtNomP.Text,TextAP.Text, TextAM.Text);
             
            
             GridHistoricoP.DataSource = cHistorico;
@@ -87,11 +87,9 @@ namespace InventariosPJEH
         {
             List<string> LErrores = new List<string>();
 
-            if (string.IsNullOrEmpty(TxtNomP.Text))
+            if (string.IsNullOrEmpty(TxtNomP.Text) && string.IsNullOrEmpty(TextAP.Text) && string.IsNullOrEmpty(TextAM.Text))
             {
-                LErrores.Add("Nombre");
-                LErrores.Add("APaterno");
-                LErrores.Add("AMaterno");
+                LErrores.Add("La búsqueda no puede estar vacía");                
             }
             return LErrores;
         }

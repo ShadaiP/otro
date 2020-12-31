@@ -19,29 +19,29 @@ namespace InventariosPJEH.CAccesoDatos
                 cnn.Open();
 
                 
-                String query = "SELECT ClaveEmpleado, Nombre+APaterno+AMaterno as NombreCompleto, Cargo, UniAdmin, Fecha FROM Vta_HistoricoPersonal WHERE ";
+                String query = "SELECT ClaveEmpleado, Nombre, APaterno, AMaterno, Cargo, UniAdmin, Fecha FROM Vta_HistoricoPersonal WHERE ";
                 if (Nombre.Length > 0)
                 {
-                    query += " (Nombre LIKE %@Nombre%) OR";
+                    query += " (Nombre LIKE @Nombre) OR";
                 }
                 if (APaterno.Length > 0)
                 {
-                    query += "(APaterno LIKE %@APaterno%) OR";
+                    query += "(APaterno LIKE @APaterno) OR";
                 }
                 if (AMaterno.Length > 0)
                 {
-                    query += "(AMaterno LIKE %@AMaterno%) OR";
+                    query += "(AMaterno LIKE @AMaterno) OR";
                 }
                 if (query.EndsWith("R"))
                 {
-                    query.Substring(0, query.Length - 3);
+                    query = query.Substring(0, query.Length - 3);
                 }
 
                 SqlCommand cmd = new SqlCommand(query, cnn);
                 cmd.Parameters.Clear();
-                cmd.Parameters.Add(new SqlParameter("@Nombre", Nombre));
-                cmd.Parameters.Add(new SqlParameter("@APaterno", APaterno));
-                cmd.Parameters.Add(new SqlParameter("@AMaterno", AMaterno));
+                cmd.Parameters.AddWithValue("@Nombre", "%" + Nombre + "%");
+                cmd.Parameters.AddWithValue("@APaterno", "%" + APaterno + "%");
+                cmd.Parameters.AddWithValue("@AMaterno", "%" + AMaterno + "%");
                /* cmd.Parameters.Add("@Nombre",System.Data.SqlDbType.Char).Value = Nombre;
                 cmd.Parameters.Add("@APaterno", System.Data.SqlDbType.Char).Value = APaterno;
                 cmd.Parameters.Add("@AMaterno", System.Data.SqlDbType.Char).Value = AMaterno;*/
@@ -52,7 +52,9 @@ namespace InventariosPJEH.CAccesoDatos
                     while (rd.Read())
                     {
                         CHistoricoPersonal cHistorico = new CHistoricoPersonal();
-                        cHistorico.NombreCompleto = rd["NombreCompleto"].ToString();
+                        cHistorico.NombreCompleto = rd["Nombre"].ToString().Trim() + " " +
+                                rd["APaterno"].ToString().Trim() + " " +
+                                rd["AMaterno"].ToString().Trim();
                         cHistorico.Cargo = rd["Cargo"].ToString();
                         cHistorico.UniAdmin = rd["UniAdmin"].ToString();
                         cHistorico.Fecha = BdConverter.FieldToDate(rd["Fecha"]);
