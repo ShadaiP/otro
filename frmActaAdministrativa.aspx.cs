@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Web.UI.WebControls;
-using System.Data;
 using InventariosPJEH.CAccesoDatos;
 using InventariosPJEH.CNegocios;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace InventariosPJEH
 {
@@ -18,15 +15,20 @@ namespace InventariosPJEH
             BtnFiltroB_Click();
         }
 
-        protected void BtnGenerarA_CheckedChanged(object sender, EventArgs e)
+        protected void BtnActasRadio_CheckedChanged(object sender, EventArgs e)
         {
-            DivTablaResultadosResguardo.Visible = false;
-            RadioButton RadioSeleccionado = sender as RadioButton;
 
-            if (RadioSeleccionado.ID == "BtnGenerarA")
+            if (tabGeneracionRadio.Checked == true)
             {
-                DivGeneral.Visible = true;
-
+                divGeneracionActas.Visible = true;
+                divConsultaActas.Visible = false;
+                cancelarEdicionConsultaActa();
+            }
+            if (tabConsultaRadio.Checked == true)
+            {
+                divConsultaActas.Visible = true;
+                divGeneracionActas.Visible = false;
+                limpiarCamposGenerarActa();
             }
 
         }
@@ -42,7 +44,7 @@ namespace InventariosPJEH
                 {
                     error += " - " + itemError;
                 }
-                MostrarMensaje($"DATOS FALTANTES:  {error}", "info", "Intervalo", "Inicio");
+               // MostrarMensaje($"DATOS FALTANTES:  {error}", "info", "Intervalo", "Inicio");
                 // DivMostrar.Visible = false;
 
             }
@@ -114,7 +116,7 @@ namespace InventariosPJEH
             return lstActaAdmin;
         }
 
-        public void limpiarCampos()
+        public void limpiarCamposGenerarActa()
         {
             lblNombreResul.Text = "";
             lblCargoResul.Text = "";
@@ -129,7 +131,7 @@ namespace InventariosPJEH
             sectionBienes.Visible = false;
         }
 
-        protected void BtnGuardarActa_Click(object sender, EventArgs e)
+        protected void BtnInsertarActa_Click(object sender, EventArgs e)
         {
             //Capturamos los errores con try catch
             try
@@ -137,6 +139,33 @@ namespace InventariosPJEH
                 if(!BdActaAdmin.InsertarActa(int.Parse(lblIdUniAdmin.Text), int.Parse(lblIdResguardo.Text), txtNumActa.Text, txtFechaAdquisicion.Text))
                 {
                     MostrarMensaje("** Error en Base de Datos **", "error", "Normal", "Incorrecto");
+                }
+                else
+                {
+                    limpiarCamposGenerarActa();
+                    MostrarMensaje("La Insersión se realizó correctamente", "info", "Normal", "ModificacionCorrecta");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        protected void BtnGuardarEditActa_Click(object sender, EventArgs e)
+        {
+            //Capturamos los errores con try catch
+            try
+            {
+                if (!BdActaAdmin.ActualizarActa(txtEditNumActa.Text, txtEditConActaFechaSol.Text, lstEstatus.SelectedValue, txtEditConActaDescripcion.Text))
+                {
+                    MostrarMensaje("** Error en Base de Datos **", "error", "Normal", "Incorrecto");
+                }
+                else
+                {
+                    cancelarEdicionConsultaActa();
+                    divConsultaActasEditar.Visible = false;
+                    MostrarMensaje("La modificación se realizó correctamente", "info", "Normal", "ModificacionCorrecta");
                 }
             }
             catch (Exception ex)
@@ -150,7 +179,7 @@ namespace InventariosPJEH
             //Capturamos los errores con try catch
             try
             {
-                limpiarCampos();
+                limpiarCamposGenerarActa();
             }
             catch (Exception ex)
             {
@@ -159,5 +188,138 @@ namespace InventariosPJEH
 
         }
 
+        protected void BtnCancelarEdit_Click(object sender, EventArgs e)
+        {
+            //Capturamos los errores con try catch
+            try
+            {
+                cancelarEdicionConsultaActa();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        protected void BtnActivarPeriodo(object sender, EventArgs e)
+        {            
+            if (checkConPeriodo.Checked == true)
+            {
+                celdaConFechaIni.Visible = true;
+                TceldaConFechaFin.Visible = true;
+            }
+            else
+            {
+                txtConFechaIni.Text = "";
+                txtConFechaFin.Text = "";
+                celdaConFechaIni.Visible = false;
+                TceldaConFechaFin.Visible = false;                
+            }            
+        }
+
+        protected void BtnConsultarActa(object sender, EventArgs e)
+        {
+            try
+            {
+                if (String.IsNullOrWhiteSpace(txtConNumActa.Text) || String.IsNullOrWhiteSpace(txtConNumInventario.Text)
+                    || (String.IsNullOrWhiteSpace(txtConFechaIni.Text) && String.IsNullOrWhiteSpace(txtConFechaFin.Text)))
+                {
+                    gridConsultaActas.DataSource = BdActaAdmin.ConsultarActas(txtConNumActa.Text, txtConNumInventario.Text, txtConFechaIni.Text, txtConFechaFin.Text);
+                    gridConsultaActas.DataBind();
+                    tablaConsultaActas.Visible = true;
+                    if (gridConsultaActas.Rows.Count == 0)
+                    {
+                        MostrarMensaje("** No existen datos con la búsqueda solicitada **", "error", "Normal", "Incorrecto");
+                    }
+                }
+                else
+                {
+                    MostrarMensaje("** Datos Faltantes **", "error", "Normal", "Incorrecto");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        protected void btnEditar_Click(object sender, EventArgs e)
+        {            
+            try
+            {
+                divConsultaActasEditar.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        protected void GridModificar_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            int index = Convert.ToInt32(e.CommandArgument);
+            GridViewRow RowSelecionada = gridConsultaActas.Rows[index];  
+            txtEditNumActa.Text = Page.Server.HtmlDecode(RowSelecionada.Cells[0].Text);
+            txtEditActaFechaActa.Text = Page.Server.HtmlDecode(RowSelecionada.Cells[3].Text);            
+        }
+
+        protected void BtnConActasFechaModificar(object sender, EventArgs e)
+        {
+            if (checkConActasFechaMod.Checked)
+            {
+                txtEditConActaDescripcion.Visible = true;
+                celdaConActasFechaSolucion.Visible = true;
+                lblConActaEstatus.Visible = true;
+                lstEstatus.Visible = true;
+                lblEditConActasDescripcion.Visible = true;
+            }
+            else
+            {
+                txtEditConActaDescripcion.Visible = false;
+                celdaConActasFechaSolucion.Visible = false;
+                lblConActaEstatus.Visible = false;
+                lstEstatus.Visible = false;
+                lblEditConActasDescripcion.Visible = false;
+                txtEditConActaDescripcion.Text = "";
+                txtEditConActaFechaSol.Text = "";
+                lstEstatus.SelectedValue = "-1";
+            }
+            
+
+        }
+
+        protected void BtnLimpiarActa(object sender, EventArgs e)
+        {
+            cancelarEdicionConsultaActa();
+            divConsultaActasEditar.Visible = false;
+            tablaConsultaActas.Visible = false;
+            gridConsultaActas.DataSource = null;
+            gridConsultaActas.DataBind();
+            txtConNumActa.Text = "";
+            txtConNumInventario.Text = "";
+        }
+        
+
+        public void cancelarEdicionConsultaActa()
+        {            
+            txtEditConActaDescripcion.Visible = false;
+            celdaConActasFechaSolucion.Visible = false;
+            lblConActaEstatus.Visible = false;
+            lstEstatus.Visible = false;
+            lblEditConActasDescripcion.Visible = false;
+            txtEditConActaDescripcion.Text = "";
+            txtEditConActaFechaSol.Text = "";
+            lstEstatus.SelectedValue = "-1";
+            txtEditNumActa.Text = "";
+            txtEditActaFechaActa.Text = "";
+            checkConActasFechaMod.Checked = false;
+        }
+
+        //protected void BtnSetFechaFinConsulta(object sender, EventArgs e)
+        //{
+        //    calConFechaFin.SelectedDate = calConFechaIni.SelectedDate.Value.AddDays(1);            
+        //}
     }
 }

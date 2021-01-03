@@ -20,15 +20,15 @@ namespace InventariosPJEH.CAccesoDatos
 
                 
                 String query = "SELECT ClaveEmpleado, Nombre, APaterno, AMaterno, Cargo, UniAdmin, Fecha FROM Vta_HistoricoPersonal WHERE ";
-                if (Nombre.Length > 0)
+                if (!String.IsNullOrWhiteSpace(Nombre))
                 {
                     query += " (Nombre LIKE @Nombre) OR";
                 }
-                if (APaterno.Length > 0)
+                if (!String.IsNullOrWhiteSpace(APaterno))
                 {
                     query += "(APaterno LIKE @APaterno) OR";
                 }
-                if (AMaterno.Length > 0)
+                if (!String.IsNullOrWhiteSpace(AMaterno))                    
                 {
                     query += "(AMaterno LIKE @AMaterno) OR";
                 }
