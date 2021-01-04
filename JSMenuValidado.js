@@ -83,10 +83,6 @@
             '			                "URL": "frmConsultaBienes.aspx"' +
             '			            },' +
             '			            {' +
-            '			            "Nombre": "Histórico Personal",' +
-            '			                "URL": "frmHistoricoPersonal.aspx"' +
-            '			            },' +
-            '			            {' +
             '			            "Nombre": "Impresión de Etiquetas",' +
             '			                "URL": ""' +
             '			            }' +            
@@ -135,7 +131,7 @@
             '			            },' +
             '                       {' +
             '			                "Nombre": "Histórico Persona",' +
-            '			                "URL": ""' +
+            '			                "URL": "frmHistoricoPersonal.aspx"' +
             '			            }' +
             '		            ]' +
             '	            },' +
@@ -199,7 +195,7 @@
             '			            },' +
             '                       {' +
             '			                "Nombre": "Histórico Persona",' +
-            '			                "URL": ""' +
+            '			                "URL": "frmHistoricoPersonal.aspx"' +
             '			            }' +
             '		            ]' +
             '	            }' +
