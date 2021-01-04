@@ -208,6 +208,12 @@ namespace InventariosPJEH
             {
                 celdaConFechaIni.Visible = true;
                 TceldaConFechaFin.Visible = true;
+                txtConFechaIni.Text = "";
+                txtConFechaFin.Text = "";
+                lblConNumActa.Visible = false;
+                txtConNumActa.Visible = false;
+                lblConNumInventario.Visible = false;
+                txtConNumInventario.Visible = false;
             }
             else
             {
@@ -222,21 +228,40 @@ namespace InventariosPJEH
         {
             try
             {
-                if (String.IsNullOrWhiteSpace(txtConNumActa.Text) || String.IsNullOrWhiteSpace(txtConNumInventario.Text)
-                    || (String.IsNullOrWhiteSpace(txtConFechaIni.Text) && String.IsNullOrWhiteSpace(txtConFechaFin.Text)))
+                if (!checkConPeriodo.Checked)
                 {
-                    gridConsultaActas.DataSource = BdActaAdmin.ConsultarActas(txtConNumActa.Text, txtConNumInventario.Text, txtConFechaIni.Text, txtConFechaFin.Text);
-                    gridConsultaActas.DataBind();
-                    tablaConsultaActas.Visible = true;
-                    if (gridConsultaActas.Rows.Count == 0)
+                    if (String.IsNullOrWhiteSpace(txtConNumActa.Text) || String.IsNullOrWhiteSpace(txtConNumInventario.Text))
                     {
-                        MostrarMensaje("** No existen datos con la búsqueda solicitada **", "error", "Normal", "Incorrecto");
+                        MostrarMensaje("** Datos Faltantes **", "error", "Normal", "Incorrecto");
+                    }
+                    else
+                    {
+                        gridConsultaActas.DataSource = BdActaAdmin.ConsultarActas(txtConNumActa.Text, txtConNumInventario.Text, txtConFechaIni.Text, txtConFechaFin.Text);
+                        gridConsultaActas.DataBind();
+                        tablaConsultaActas.Visible = true;
+                        if (gridConsultaActas.Rows.Count == 0)
+                        {
+                            MostrarMensaje("** No existen datos con la búsqueda solicitada **", "error", "Normal", "Incorrecto");
+                        }
                     }
                 }
                 else
                 {
-                    MostrarMensaje("** Datos Faltantes **", "error", "Normal", "Incorrecto");
-                }
+                    if ((String.IsNullOrWhiteSpace(txtConFechaIni.Text) && String.IsNullOrWhiteSpace(txtConFechaFin.Text)))
+                    {
+                        MostrarMensaje("** Datos Faltantes **", "error", "Normal", "Incorrecto");
+                    }
+                    else
+                    {
+                        gridConsultaActas.DataSource = BdActaAdmin.ConsultarActas(txtConNumActa.Text, txtConNumInventario.Text, txtConFechaIni.Text, txtConFechaFin.Text);
+                        gridConsultaActas.DataBind();
+                        tablaConsultaActas.Visible = true;
+                        if (gridConsultaActas.Rows.Count == 0)
+                        {
+                            MostrarMensaje("** No existen datos con la búsqueda solicitada **", "error", "Normal", "Incorrecto");
+                        }
+                    }
+                }               
                 
             }
             catch (Exception ex)
