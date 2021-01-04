@@ -214,13 +214,21 @@ namespace InventariosPJEH
                 txtConNumActa.Visible = false;
                 lblConNumInventario.Visible = false;
                 txtConNumInventario.Visible = false;
+                txtConNumActa.Text = "";
+                txtConNumInventario.Text = "";
             }
             else
             {
                 txtConFechaIni.Text = "";
                 txtConFechaFin.Text = "";
                 celdaConFechaIni.Visible = false;
-                TceldaConFechaFin.Visible = false;                
+                TceldaConFechaFin.Visible = false;
+                lblConNumActa.Visible = true;
+                txtConNumActa.Visible = true;
+                lblConNumInventario.Visible = true;
+                txtConNumInventario.Visible = true;
+                txtConNumActa.Text = "";
+                txtConNumInventario.Text = "";
             }            
         }
 
@@ -230,7 +238,7 @@ namespace InventariosPJEH
             {
                 if (!checkConPeriodo.Checked)
                 {
-                    if (String.IsNullOrWhiteSpace(txtConNumActa.Text) || String.IsNullOrWhiteSpace(txtConNumInventario.Text))
+                    if (String.IsNullOrWhiteSpace(txtConNumActa.Text) && String.IsNullOrWhiteSpace(txtConNumInventario.Text))
                     {
                         MostrarMensaje("** Datos Faltantes **", "error", "Normal", "Incorrecto");
                     }
