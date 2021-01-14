@@ -24,13 +24,17 @@ namespace InventariosPJEH
             }
         }
 
-                protected void BtnActasRadio_CheckedChanged(object sender, EventArgs e)
+        protected void BtnActasRadio_CheckedChanged(object sender, EventArgs e)
         {
             if (tabGeneracionRadio.Checked == true)
             {
                 divGeneracionActas.Visible = true;
                 divConsultaActas.Visible = false;
                 cancelarEdicionConsultaActa();
+                txtConNumActa.Text = "";
+                txtConNumInventario.Text = "";
+                txtConFechaIni.Text = "";
+                txtConFechaFin.Text = "";
             }
             if (tabConsultaRadio.Checked == true)
             {

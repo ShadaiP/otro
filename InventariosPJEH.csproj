@@ -208,6 +208,7 @@
     <Compile Include="CNegocios\CAsignarResguardos.cs" />
     <Compile Include="CNegocios\CBajaBienAdmin.cs" />
     <Compile Include="CNegocios\CCalculoDepreciacion.cs" />
+    <Compile Include="CNegocios\CDatosBienesActa.cs" />
     <Compile Include="CNegocios\CDatosResguardante.cs" />
     <Compile Include="CNegocios\CHistoricoBien.cs" />
     <Compile Include="CNegocios\CHistoricoPersonal.cs" />
