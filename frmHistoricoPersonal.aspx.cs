@@ -22,26 +22,30 @@ namespace InventariosPJEH
             TxtNomP.Text = "";
             TextAP.Text = "";
             TextAM.Text = "";
-            DivHistorico.Visible = false;
-
-
+            GridHistoricoP.DataSource = null;
+            GridHistoricoP.DataBind();
+            DivHistorico.Visible = false;            
         }
 
         public void MostrarHistorialPersonal()
         {
              
-            List<CHistoricoPersonal> cHistorico = BdHistoricoPersonal.MostrarHistorialPersonal(TxtNomP.Text,TextAP.Text, TextAM.Text);
-            
-           
-            GridHistoricoP.DataSource = cHistorico;
-            GridHistoricoP.DataBind();
+            List<CHistoricoPersonal> cHistorico = BdHistoricoPersonal.MostrarHistorialPersonal(TxtNomP.Text,TextAP.Text, TextAM.Text);                                   
 
             if (cHistorico.Count == 0 || cHistorico == null)
-
-                MostrarMensaje("** No existen datos  **", "error", "Normal", "Incorrecto");
+            {
+                GridHistoricoP.DataSource = null;
+                GridHistoricoP.DataBind();
+                DivHistorico.Visible = false;
+                MostrarMensaje("** No existen resultados con los filtros solicitados  **", "error", "Normal", "Incorrecto");
+            }
             else
+            {
+                GridHistoricoP.DataSource = cHistorico;
+                GridHistoricoP.DataBind();
                 DivHistorico.Visible = true;
-            GridHistoricoP.Visible = true;
+            }
+               
         }
 
         public void BtnBuscarP_Click (object sender, EventArgs e)

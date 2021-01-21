@@ -300,7 +300,7 @@ namespace InventariosPJEH.CAccesoDatos
 
         public static String generarQueryConsultaActa(String numActa, String numInventario, String fechaIni, String fechaFin)
         {
-            String query = "SELECT NumActa, Nombre, UniAdmin, CONVERT(varchar,FechaAlta,103) as FechaAlta, NumInventario, DescripcionBien, Marca, Modelo, Serie, IdResguardo, IdActa, status, Descripcion, FechaCancela FROM Vta_ConsultarActas WHERE";
+            String query = "SELECT NumActa, Nombre, UniAdmin, CONVERT(varchar,FechaAlta,103) as FechaAlta, NumInventario, DescripcionBien, Marca, Modelo, Serie, IdResguardo, IdActa, status, Descripcion, CONVERT(varchar,FechaCancela,103) as FechaCancela FROM Vta_ConsultarActas WHERE";
 
             if (!String.IsNullOrWhiteSpace(numActa))
             {

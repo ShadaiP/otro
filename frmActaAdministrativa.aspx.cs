@@ -24,17 +24,13 @@ namespace InventariosPJEH
             }
         }
 
-        protected void BtnActasRadio_CheckedChanged(object sender, EventArgs e)
+                protected void BtnActasRadio_CheckedChanged(object sender, EventArgs e)
         {
             if (tabGeneracionRadio.Checked == true)
             {
                 divGeneracionActas.Visible = true;
                 divConsultaActas.Visible = false;
                 cancelarEdicionConsultaActa();
-                txtConNumActa.Text = "";
-                txtConNumInventario.Text = "";
-                txtConFechaIni.Text = "";
-                txtConFechaFin.Text = "";
             }
             if (tabConsultaRadio.Checked == true)
             {
@@ -253,7 +249,7 @@ namespace InventariosPJEH
                 txtConNumInventario.Text = "";
             }            
         }
-
+        
         protected void BtnConsultarActa(object sender, EventArgs e)
         {
             try
@@ -299,6 +295,7 @@ namespace InventariosPJEH
             catch (Exception ex)
             {
                 MostrarMensaje("** Error en Base de Datos **", "error", "Normal", "Incorrecto");
+                Console.WriteLine(ex.ToString());
                 throw ex;
             }
         }
