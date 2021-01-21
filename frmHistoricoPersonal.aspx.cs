@@ -11,10 +11,6 @@ namespace InventariosPJEH
 {
     public partial class frmHistoricoPersonal : System.Web.UI.Page
     {
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
 
         protected void BtnNuevBu_Click(object sender, EventArgs e)
         {
@@ -32,7 +28,9 @@ namespace InventariosPJEH
              
             List<CHistoricoPersonal> cHistorico = BdHistoricoPersonal.MostrarHistorialPersonal(TxtNomP.Text,TextAP.Text, TextAM.Text);                                   
 
-            if (cHistorico.Count == 0 || cHistorico == null)
+            GridHistoricoP.DataSource = cHistorico;
+            GridHistoricoP.DataBind();
+            if (GridHistoricoP.Rows.Count == 0)
             {
                 GridHistoricoP.DataSource = null;
                 GridHistoricoP.DataBind();
@@ -40,9 +38,7 @@ namespace InventariosPJEH
                 MostrarMensaje("** No existen resultados con los filtros solicitados  **", "error", "Normal", "Incorrecto");
             }
             else
-            {
-                GridHistoricoP.DataSource = cHistorico;
-                GridHistoricoP.DataBind();
+            {                
                 DivHistorico.Visible = true;
             }
                
@@ -50,20 +46,12 @@ namespace InventariosPJEH
 
         public void BtnBuscarP_Click (object sender, EventArgs e)
         {
-            List<string> listaErrores = ValidarDatosCalculo();
-
-            if (listaErrores.Count > 0)
+            if (string.IsNullOrEmpty(TxtNomP.Text) && string.IsNullOrEmpty(TextAP.Text) && string.IsNullOrEmpty(TextAM.Text))
             {
-                string error = "";
-                foreach (var itemError in listaErrores)
-                {
-                    error += " - " + itemError;
-                }
+                                
                 // MostrarMensaje($"Verifica los siguientes datos:{error}. ", "error", "Normal", "Incorrecto");
-                MostrarMensaje($"DATOS FALTANTES:  {error}", "info", "Intervalo", "Inicio");
+                MostrarMensaje("** Datos Faltantes **", "error", "Normal", "Incorrecto");
                 DivHistorico.Visible = false;
-               
-
             }
             else
             {
@@ -85,17 +73,6 @@ namespace InventariosPJEH
 
 
             ScriptManager.RegisterClientScriptBlock(this, this.GetType(), ClaveMsj, Msj, true);
-        }
-
-        private List<string> ValidarDatosCalculo()
-        {
-            List<string> LErrores = new List<string>();
-
-            if (string.IsNullOrEmpty(TxtNomP.Text) && string.IsNullOrEmpty(TextAP.Text) && string.IsNullOrEmpty(TextAM.Text))
-            {
-                LErrores.Add("La búsqueda no puede estar vacía");                
-            }
-            return LErrores;
         }
 
     }

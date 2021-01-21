@@ -2,13 +2,6 @@
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
-<script runat="server">
-    public void BtnSetFechaFinConsulta()
-    {
-        this.calConFechaFin.SelectedDate = calConFechaIni.SelectedDate.Value.AddDays(1);
-    }
-</script>
-
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
     <style type="text/css">
         .auto-style19 {
@@ -209,7 +202,7 @@
                                 <%--<asp:BoundField DataField="strStatus" HeaderText="Estatus" />--%>
                                 <asp:TemplateField HeaderText="Status">
                                     <ItemTemplate>
-                                        <asp:Label runat="server" ID="columnStatus" Text='<%# (Eval("strStatus").ToString().Equals("A") ) ? "Nueva" : (Eval("strStatus").ToString().Equals("R") ) ? "Reposición" : (Eval("strStatus").ToString().Equals("C") ) ? "Cancelación" : ""   %>'/>
+                                        <asp:Label runat="server" ID="columnStatus" Text='<%# (Eval("strStatus").ToString().Equals("A") ) ? "Activo" : (Eval("strStatus").ToString().Equals("R") ) ? "Reposición" : (Eval("strStatus").ToString().Equals("C") ) ? "Cancelación" : ""   %>'/>
                                     </ItemTemplate>
                                     <ItemStyle Width="50px" />
                                 </asp:TemplateField>

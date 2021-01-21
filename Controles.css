@@ -19,13 +19,13 @@
     border: solid 1px #525252;
     border-collapse: collapse;
 }
-    .StyleGridV, .StyleGridVActaAdmin td {
+    .StyleGridV td, .StyleGridVActaAdmin td {
         padding: 2px;
         border: solid 1px #c1c1c1;
         color: #717171;
         text-transform: uppercase;
     }
-    .StyleGridV, .StyleGridVActaAdmin th {
+    .StyleGridV th, .StyleGridVActaAdmin th {
         padding: 4px 2px;
         color: #fff;
         background: #424242 url(../Imagenes/Generales/EncabezadoGrid.png) repeat-x top;
