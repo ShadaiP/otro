@@ -320,8 +320,9 @@ namespace InventariosPJEH.CAccesoDatos
             }
             if (query.EndsWith("D"))
             {
-                query = query.Substring(0, query.Length - 4);
+                query = query.Substring(0, query.Length - 4);                
             }
+            query += " ORDER BY CAST(Vta_ConsultarActas.FechaAlta AS date) ASC";
 
             return query;
         }
