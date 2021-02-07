@@ -76,21 +76,29 @@ namespace InventariosPJEH
 
         protected void BtnBuscar_Click(object sender, EventArgs e)
         {
-            /*try
-            {*/
+            BuscarTipo();
+        }
+
+        /// <summary>
+        ///  Función para buscar Unidad Administrativa
+        /// </summary>
+        public void BuscarTipo()
+        {
+            try
+            {
+                string DescClasific = Convert.ToString(ddlTipo.SelectedItem);
+
+                DivTabla.Visible = true;
+
                 if (ddlTipo.SelectedIndex != 0)
                 {
                     //Parametros de busqueda
-                    String DescClasific = Convert.ToString(ddlTipo.SelectedItem);
-
-                
-
-                MostrarT.Visible = true;
-                MostrarM.Text = DescClasific;
-                   GridBuscarT.DataSource = BdUnidadAdmin.ConsultarGbUnidad(DescClasific);
+                    
+                    GridBuscarT.DataSource = BdUnidadAdmin.ConsultarGbUnidad(DescClasific);
                     GridBuscarT.DataBind();
+                   
 
-                    DivTabla.Visible = true;
+
                     if (GridBuscarT.Rows.Count == 0)
                     {
                         MostrarMensaje("** No existen datos con la búsqueda solicitada **", "error", "Normal", "Incorrecto");
@@ -100,20 +108,16 @@ namespace InventariosPJEH
                 else
                 {
                     MostrarMensaje("** Campos Vacíos **", "error", "Normal", "Incorrecto");
+
                 }
-            /* }
-           catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 MostrarMensaje("** Error en Base de Datos **", "error", "Normal", "Incorrecto");
                 Console.WriteLine(ex.ToString());
                 throw ex;
-            }*/
+            }
         }
-
-        /// <summary>
-        ///  Función para buscar Unidad Administrativa
-        /// </summary>
-
 
 
 

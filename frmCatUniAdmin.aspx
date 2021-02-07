@@ -61,8 +61,9 @@
                     <fieldset style="height:auto">
 
                         <asp:GridView id="GridBuscarT" runat="server" CssClass="StyleGridV" Height="142px" Width="100%" AutoGenerateColumns="false" 
-                            >
+                             DataKeyNames="IdUniAdmin,UniAdmin,IdSubFondo,SubFondo,Tipo,DescTipo,Telefono,EMail,Clasificacion,DescClasific,IdEmpleado">
                             <Columns>
+                                <asp:BoundField DataField="IdUniAdmin" HeaderText="iD"/>
                                 <asp:BoundField DataField="UniAdmin" HeaderText="Unidad Administrativa"/>
 
                             </Columns>
