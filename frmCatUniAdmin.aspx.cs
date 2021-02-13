@@ -18,6 +18,8 @@ namespace InventariosPJEH
 {
     public partial class frmCatUniAdmin : System.Web.UI.Page
     {
+        CUnidadAdmin obJN = new CUnidadAdmin();
+        BdUnidadAdmin obJE = new BdUnidadAdmin();
 
 
         protected void Page_Load(object sender, EventArgs e)
@@ -29,6 +31,9 @@ namespace InventariosPJEH
             if(!this.IsPostBack)
             {
                 IniciarLlenadoDropTipo();
+                IniciarLlenadoUniNuevo();
+                IniciarLlenadoSub();
+                IniciarLlenadoTipo();
             }
           
         }
@@ -45,6 +50,47 @@ namespace InventariosPJEH
             ddlDistrito.Items.Insert(0, new ListItem("Seleccionar", "0"));
         }
 
+
+        /// <summary>
+        /// llenado unidad administrativa nuevo
+        /// </summary>
+        public void IniciarLlenadoUniNuevo()
+        {
+            DataTable Datos = new DataTable();
+            Datos = BdUnidadAdmin.ClasificaciónUA();
+            ddlTipoNuevo.DataSource = Datos;
+            ddlTipoNuevo.DataTextField = "Descripcion";
+            ddlTipoNuevo.DataValueField = "IdAbreviatura";
+            ddlTipoNuevo.DataBind();
+            ddlTipoNuevo.Items.Insert(0, new ListItem("Seleccionar", "0"));
+            ddlDistritoNuevo.Items.Insert(0, new ListItem("Seleccionar", "0"));
+            ddlSubFondoN.Items.Insert(0, new ListItem("Seleccionar", "0"));
+        }
+
+        public void IniciarLlenadoSub()
+        {
+            DataTable Datos = new DataTable();
+            Datos = BdUnidadAdmin.ObtenerSubFondo();
+            ddlSubFondoN.DataSource = Datos;
+            ddlSubFondoN.DataTextField = "SubFondo";
+            ddlSubFondoN.DataValueField = "IdSubFondo";
+            ddlSubFondoN.DataBind();
+            ddlDistritoNuevo.Items.Insert(0, new ListItem("Seleccionar", "0"));
+            ddlSubFondoN.Items.Insert(0, new ListItem("Seleccionar", "0"));
+        }
+
+        public void IniciarLlenadoTipo()
+        {
+            DataTable Datos = new DataTable();
+            Datos = BdUnidadAdmin.ObtenerTipo();
+            ddlTipoSub.DataSource = Datos;
+            ddlTipoSub.DataTextField = "Tipo";
+            ddlTipoSub.DataValueField = "IdTipo";
+            ddlTipoSub.DataBind();
+            ddlTipoSub.Items.Insert(0, new ListItem("Seleccionar", "0"));
+        }
+
+
         protected void ddlTipo_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(ddlTipo.SelectedItem.Text == "PRIMERA INSTANCIA")
@@ -58,6 +104,7 @@ namespace InventariosPJEH
                 ddlDistrito.DataValueField = "IdDistrito";
                 ddlDistrito.DataBind();
                 ddlDistrito.Items.Insert(0, new ListItem("Seleccionar", "0"));
+                
 
             }
             else 
@@ -87,29 +134,29 @@ namespace InventariosPJEH
             try
             {
                 string DescClasific = Convert.ToString(ddlTipo.SelectedItem);
+                string Distrito = Convert.ToString(ddlDistrito.SelectedItem);
 
-                DivTabla.Visible = true;
+                DivResultados.Visible = true;
 
-                if (ddlTipo.SelectedIndex != 0)
+                if (ddlTipo.SelectedIndex != 0 & ddlDistrito.SelectedIndex != 0)
                 {
-                    //Parametros de busqueda
+                    GridTabla.DataSource = BdUnidadAdmin.ConsultarGbUD(DescClasific, Distrito);
+                    GridTabla.DataBind();
                     
-                    GridBuscarT.DataSource = BdUnidadAdmin.ConsultarGbUnidad(DescClasific);
-                    GridBuscarT.DataBind();
-                   
-
-
-                    if (GridBuscarT.Rows.Count == 0)
-                    {
-                        MostrarMensaje("** No existen datos con la búsqueda solicitada **", "error", "Normal", "Incorrecto");
-                    }
-
                 }
                 else
                 {
-                    MostrarMensaje("** Campos Vacíos **", "error", "Normal", "Incorrecto");
+                    GridTabla.DataSource = BdUnidadAdmin.ConsultarGbUnidad(DescClasific);
+                    GridTabla.DataBind();
 
+                    if (GridTabla.Rows.Count == 0)
+                    {
+                        MostrarMensaje("** No existen datos con la búsqueda solicitada **", "error", "Normal", "Incorrecto");
+                        DivResultados.Visible = false;
+                        LimpiarRegistros();
+                    }
                 }
+               
             }
             catch (Exception ex)
             {
@@ -142,6 +189,224 @@ namespace InventariosPJEH
             ScriptManager.RegisterClientScriptBlock(this, this.GetType(), ClaveMsj, Msj, true);
         }
 
+        public void LimpiarRegistros()
+        {
+            ddlTipo.SelectedIndex = 0;
+            ddlDistrito.SelectedIndex = 0;
+        }
+
+        public void LimpiarNuevoR()
+        {
+            ddlTipoNuevo.SelectedIndex = 0;
+            ddlDistritoNuevo.SelectedIndex = 0;
+            ddlSubFondoN.SelectedIndex = 0;
+            ddlTipoSub.SelectedIndex = 0;
+            TxTCorreoN.Text = string.Empty;
+            TxTNombreUniN.Text = string.Empty;
+            TxtTelefonoNue.Text = string.Empty;
+        }
+
+        protected void ddlTipoNuevo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+           if(ddlTipoNuevo.SelectedItem.Text == "PRIMERA INSTANCIA")
+            {
+                this.ddlDistritoNuevo.Visible = true;
+                this.LblDistritoN.Visible = true;
+                DataTable Datos = new DataTable();
+                Datos = BdUnidadAdmin.ObtenerDistritos();
+                ddlDistritoNuevo.DataSource = Datos;
+                ddlDistritoNuevo.DataTextField = "Distrito";
+                ddlDistritoNuevo.DataValueField = "IdDistrito";
+                ddlDistritoNuevo.DataBind();
+                ddlDistritoNuevo.Items.Insert(0, new ListItem("Seleccionar", "0"));
+            }
+           else
+            {
+                this.ddlDistritoNuevo.Visible = false;
+                this.LblDistritoN.Visible = false;
+            }
+        }
+
+        protected void BtnNuevoR_Click(object sender, EventArgs e)
+        {
+            if (DivNuevoReg.Visible == false)
+            {
+                LimpiarRegistros();
+                DivResultados.Visible = false;
+                DivNuevoReg.Visible = true;
+                BtnGuardar.Visible = true;
+                BtnCancelar.Visible = true;
+            }
+            else if(DivNuevoReg.Visible == true)
+            {
+                DivNuevoReg.Visible = false;
+                DivResultados.Visible = false;
+                BtnGuardar.Visible = false;
+                BtnCancelar.Visible = false;
+            }
+        }
+
+        protected void BtnGuardar_Click(object sender, EventArgs e)
+        {
+
+            if (ddlTipoNuevo.SelectedIndex !=0)
+            {
+               /* if(ddlDistritoNuevo.SelectedIndex !=0)
+                {*/
+                    if(ddlSubFondoN.SelectedIndex !=0)
+                    {
+                        if(ddlTipoSub.SelectedIndex !=0)
+                        {
+                            if(TxTNombreUniN.Text != "")
+                            {
+                                if(TxtTelefonoNue.Text != "")
+                                {
+                                    if(TxTCorreoN.Text != "")
+                                    {
+
+                                    string IdSubFondo = Convert.ToString(ddlSubFondoN.SelectedValue);
+                                    string IdAbreviatura = Convert.ToString(ddlTipoNuevo.SelectedValue);
+                                    string Clasificacion ="";
+                                    int Distrito = Convert.ToInt32(ddlDistritoNuevo.SelectedValue);
+                                    string IdTipo = Convert.ToString(ddlTipoSub.SelectedValue);
+                                    int IdEmpleado = 0;
+
+                                    SqlConnection cnn = new SqlConnection(CConexion.Obtener());
+                                    bool sucess = false;
+                                    SqlTransaction lTransaccion = null;
+                                    int Valor_Retorno = 0;
+
+                             
+
+                                    try
+                                    {
+                                        cnn.Open();
+
+
+                                        lTransaccion = cnn.BeginTransaction(System.Data.IsolationLevel.Serializable);
+                                        SqlCommand cmd = new SqlCommand("SP_Insertar_UniAdmin", cnn, lTransaccion);
+
+                                        cmd.CommandType = CommandType.StoredProcedure;
+                                        cmd.Parameters.Clear();
+
+                                        cmd.Parameters.AddWithValue("@IdSubFondo", IdSubFondo);
+                                        cmd.Parameters.AddWithValue("@UniAdmin", TxTNombreUniN.Text.ToUpper());
+                                        cmd.Parameters.AddWithValue("@Tipo", IdTipo);
+                                        cmd.Parameters.AddWithValue("@Telefono", TxtTelefonoNue.Text.ToUpper());
+                                        cmd.Parameters.AddWithValue("@EMail", TxTCorreoN.Text.ToUpper());
+                                        cmd.Parameters.AddWithValue("@Clasificacion", Clasificacion);
+                                        cmd.Parameters.AddWithValue("@IdAbreviatura", IdAbreviatura);
+                                        cmd.Parameters.AddWithValue("@IdEmpleado", IdEmpleado);
+
+                                        string consultar = "select IdAbreviatura, Abreviatura from Abreviaturas  where IdAbreviatura =" + IdAbreviatura;
+                                        SqlCommand cmd2 = new SqlCommand(consultar, cnn);
+                                        var rd = cmd2.ExecuteReaderAsync
+
+                                        Clasificacion = rd["Abreviatura"].ToString();
+
+
+                                        MostrarInfo.Visible = true;
+                                        IdSubF.Text = IdSubFondo;
+                                        UniA.Text = TxTNombreUniN.Text.ToUpper();
+                                        TipoNu.Text = IdTipo;
+                                        Tele.Text = TxtTelefonoNue.Text.ToUpper();
+                                        Emails.Text = TxTCorreoN.Text.ToUpper();
+                                        Clasifica.Text = Clasificacion;
+                                        IdAbrevi.Text = IdAbreviatura;
+                                 
+
+
+
+                                        SqlParameter ValorRetorno = new SqlParameter("@Comprobacion", SqlDbType.Int);
+                                        ValorRetorno.Direction = ParameterDirection.Output;
+                                        cmd.Parameters.Add(ValorRetorno);
+                                        cmd.ExecuteNonQuery();
+
+
+                                        Valor_Retorno = Convert.ToInt32(ValorRetorno.Value);
+                                        if (Valor_Retorno == 1)
+                                            sucess = true;
+                                                
+                                        }
+                                        catch(Exception ex)
+                                        {
+                                            MostrarMensaje(ex.Message, "error", "Normal", "Incorrecto");
+                                        }
+                                        finally
+                                        {
+                                            if(sucess)
+                                            {
+                                                lTransaccion.Commit();
+                                                
+                                                MostrarMensaje("** Personal guardado correctamente **", "error", "Normal", "Incorrecto");
+                                                DivNuevoReg.Visible = false;
+                                                BtnGuardar.Visible = false;
+                                                BtnCancelar.Visible = false;
+                                               cnn.Close();
+                                                LimpiarRegistros();
+                                                
+                                            }
+                                            else 
+                                            {
+                                                lTransaccion.Rollback();
+                                            cnn.Close();
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+                                    }
+                                }
+                                else 
+                                {
+                                    MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+                                }
+                            }
+                            else 
+                            {
+                                MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+                            }
+                        }
+                        else
+                        {
+                            MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+                        }
+                    }
+                    else 
+                    {
+                        MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+                    }
+                /*}
+                else 
+                {
+                    MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+                }*/
+            }
+            else
+            {
+                MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+            }
+        }
+
+        protected void BtnCancelar_Click(object sender, EventArgs e)
+        {
+           LimpiarNuevoR();
+            DivNuevoReg.Visible = false;
+            BtnGuardar.Visible = false;
+            BtnCancelar.Visible = false;
+        }
+
+        public void EliminarUnidad()
+        {
+            SqlConnection cnn = new SqlConnection(CConexion.Obtener());
+            SqlCommand cmd = new SqlCommand("SP_Eliminar_UniAdmin", cnn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            //cmd.Parameters.AddWithValue("@IdUniAdmin", obJE.IDUniAdmin);
+            cnn.Open();
+            cmd.ExecuteNonQuery();
+            cnn.Close();
+        }
 
     }
 

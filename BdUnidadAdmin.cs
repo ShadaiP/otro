@@ -50,6 +50,8 @@ namespace InventariosPJEH.CAccesoDatos
             cnn.Close();
             return Tabla;
         }
+
+
         /// <summary>
         /// Selecciona Distritos
         /// </summary>
@@ -74,7 +76,43 @@ namespace InventariosPJEH.CAccesoDatos
 
         }
         
-       
+        public static DataTable ObtenerSubFondo()
+        {
+            SqlCommand cmd = new SqlCommand();
+            DataTable Tabla = new DataTable();
+            SqlConnection cnn = new SqlConnection(CConexion.Obtener());
+            SqlDataAdapter adp = new SqlDataAdapter();
+
+            cmd.CommandText = "Select IdSubFondo, SubFondo, Tipo From Cat_SubFondo ORDER BY SubFondo";
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = cnn;
+            adp.SelectCommand = cmd;
+            cnn.Open();
+            adp.Fill(Tabla);
+            cnn.Close();
+            return Tabla;
+;
+        }
+
+        public static DataTable ObtenerTipo()
+        {
+            SqlCommand cmd = new SqlCommand();
+            DataTable Tabla = new DataTable();
+            SqlConnection cnn = new SqlConnection(CConexion.Obtener());
+            SqlDataAdapter adp = new SqlDataAdapter();
+
+            cmd.CommandText = "Select IdTipo, Tipo From Cat_TipoUniAdmin ORDER BY Tipo";
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = cnn;
+            adp.SelectCommand = cmd;
+            cnn.Open();
+            adp.Fill(Tabla);
+            cnn.Close();
+            return Tabla;
+        }
+
+
+
         public static List<CUnidadAdmin> ConsultarGbUnidad(string DescClasific)
         {
             List<CUnidadAdmin> Uni = new List<CUnidadAdmin>();
@@ -86,15 +124,25 @@ namespace InventariosPJEH.CAccesoDatos
              {
 
              cnn.Open();
-             SqlCommand cmd = new SqlCommand(string.Format("SELECT IdUniAdmin, UniAdmin, IdSubFondo, SubFondo, Tipo, DescTipo, Telefono, EMail, Clasificacion, DescClasific, IdEmpleado FROM Vta_UniAdmin where DescClasific like '%{0}%' ORDER BY UniAdmin ASC ", DescClasific), cnn);
-                 using (var rd = cmd.ExecuteReader()) 
+               
+             SqlCommand cmd = new SqlCommand(string.Format("SELECT IdUniAdmin, UniAdmin, IdSubFondo, SubFondo, Tipo, DescTipo, Telefono, EMail, Clasificacion, DescClasific, IdEmpleado FROM Vta_UniAdmin where DescClasific like '%{0}%' ORDER BY UniAdmin ASC", DescClasific), cnn);
+                
+                using (var rd = cmd.ExecuteReader()) 
                   {
                     while(rd.Read())
                     {
                         CUnidadAdmin UniA = new CUnidadAdmin();
-                        UniA.IdClasificacion = int.Parse(rd["IdUniAdmin"].ToString());
-                        UniA.UnidadAdministrativa = rd["UniAdmin"].ToString();
-
+                        UniA.IdUniAdmin = int.Parse(rd["IdUniAdmin"].ToString());
+                        UniA.UniAdmin = rd["UniAdmin"].ToString();
+                        UniA.IdSubFondo = int.Parse(rd["IdSubFondo"].ToString());
+                        UniA.SubFondo = rd["SubFondo"].ToString();
+                        UniA.Tipo = rd["Tipo"].ToString();
+                        UniA.DescTipo = rd["DescTipo"].ToString();
+                        UniA.Telefono = rd["Telefono"].ToString();
+                        UniA.Email = rd["EMail"].ToString();
+                        UniA.Clasificacion = rd["Clasificacion"].ToString();
+                        UniA.DescClasific = rd["DescClasific"].ToString();
+  
                         Uni.Add(UniA);
                     
                     
@@ -117,6 +165,51 @@ namespace InventariosPJEH.CAccesoDatos
 
             return Uni;
         }
+
+       public static List<CUnidadAdmin> ConsultarGbUD(string DescClasific, string Distrito)
+        {
+            List<CUnidadAdmin> Uni = new List<CUnidadAdmin>();
+            SqlConnection cnn = new SqlConnection(CConexion.Obtener());
+            try
+            {
+                SqlCommand cmd = new SqlCommand(string.Format("Select IdUniAdmin, UniAdmin, IdSubFondo, SubFondo, Tipo, DescTipo, Telefono, EMail, Clasificacion, DescClasific, IdEmpleado, Distrito FROM Vta_UniAdminDist where DescClasific like '%{0}%' and Distrito like '%{1}%' ORDER BY UniAdmin ASC", DescClasific, Distrito), cnn);
+                cnn.Open();
+                using(var rd = cmd.ExecuteReader())
+                {
+                    while(rd.Read())
+                    {
+                        CUnidadAdmin UniA = new CUnidadAdmin();
+                        UniA.IdUniAdmin = int.Parse(rd["IdUniAdmin"].ToString());
+                        UniA.UniAdmin = rd["UniAdmin"].ToString();
+                        UniA.IdSubFondo = int.Parse(rd["IdSubFondo"].ToString());
+                        UniA.SubFondo = rd["SubFondo"].ToString();
+                        UniA.Tipo = rd["Tipo"].ToString();
+                        UniA.DescTipo = rd["DescTipo"].ToString();
+                        UniA.Telefono = rd["Telefono"].ToString();
+                        UniA.Email = rd["EMail"].ToString();
+                        UniA.Clasificacion = rd["Clasificacion"].ToString();
+                        UniA.DescClasific = rd["DescClasific"].ToString();
+                        Uni.Add(UniA);
+                    }
+                }
+            }
+            catch (Exception e)
+
+            {
+                error = e.Message;
+                Console.WriteLine(e.ToString());
+                cnn.Close();
+                throw new Exception();
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return Uni;
+        }
+
+
+
 
     }
 }
