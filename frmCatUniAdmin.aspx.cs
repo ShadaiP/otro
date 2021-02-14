@@ -263,72 +263,116 @@ namespace InventariosPJEH
                                 {
                                     if(TxTCorreoN.Text != "")
                                     {
-
                                     string IdSubFondo = Convert.ToString(ddlSubFondoN.SelectedValue);
                                     string IdAbreviatura = Convert.ToString(ddlTipoNuevo.SelectedValue);
-                                    string Clasificacion ="";
+                                    string Clasificacion = "";
                                     int Distrito = Convert.ToInt32(ddlDistritoNuevo.SelectedValue);
                                     string IdTipo = Convert.ToString(ddlTipoSub.SelectedValue);
                                     int IdEmpleado = 0;
+
+
+                                    if (IdAbreviatura != "")
+                                    {
+                                        SqlConnection cnn3 = new SqlConnection(CConexion.Obtener());
+                                        cnn3.Open();
+                                        string consultar = "select IdAbreviatura, Abreviatura from Abreviaturas  where IdAbreviatura =" + IdAbreviatura;
+                                        SqlCommand cmd2 = new SqlCommand(consultar, cnn3);
+                                        using (var rd = cmd2.ExecuteReader())
+                                        {
+                                            while (rd.Read())
+                                            {
+                                                Clasificacion = rd["Abreviatura"].ToString();
+
+                                            }
+                                            cnn3.Close();
+                                        }
+
+                                    }
 
                                     SqlConnection cnn = new SqlConnection(CConexion.Obtener());
                                     bool sucess = false;
                                     SqlTransaction lTransaccion = null;
                                     int Valor_Retorno = 0;
-
-                             
+                                    int Valor_Retorno_Insertar_Uni = 0;
 
                                     try
                                     {
+                                       
                                         cnn.Open();
-
-
                                         lTransaccion = cnn.BeginTransaction(System.Data.IsolationLevel.Serializable);
-                                        SqlCommand cmd = new SqlCommand("SP_Insertar_UniAdmin", cnn, lTransaccion);
+                                        SqlCommand cmd = new SqlCommand("SP_Insertar_UniAdmn", cnn, lTransaccion);
 
                                         cmd.CommandType = CommandType.StoredProcedure;
                                         cmd.Parameters.Clear();
 
-                                        cmd.Parameters.AddWithValue("@IdSubFondo", IdSubFondo);
-                                        cmd.Parameters.AddWithValue("@UniAdmin", TxTNombreUniN.Text.ToUpper());
-                                        cmd.Parameters.AddWithValue("@Tipo", IdTipo);
-                                        cmd.Parameters.AddWithValue("@Telefono", TxtTelefonoNue.Text.ToUpper());
-                                        cmd.Parameters.AddWithValue("@EMail", TxTCorreoN.Text.ToUpper());
-                                        cmd.Parameters.AddWithValue("@Clasificacion", Clasificacion);
-                                        cmd.Parameters.AddWithValue("@IdAbreviatura", IdAbreviatura);
-                                        cmd.Parameters.AddWithValue("@IdEmpleado", IdEmpleado);
-
-                                        string consultar = "select IdAbreviatura, Abreviatura from Abreviaturas  where IdAbreviatura =" + IdAbreviatura;
-                                        SqlCommand cmd2 = new SqlCommand(consultar, cnn);
-                                        var rd = cmd2.ExecuteReaderAsync
-
-                                        Clasificacion = rd["Abreviatura"].ToString();
-
-
-                                        MostrarInfo.Visible = true;
-                                        IdSubF.Text = IdSubFondo;
-                                        UniA.Text = TxTNombreUniN.Text.ToUpper();
-                                        TipoNu.Text = IdTipo;
-                                        Tele.Text = TxtTelefonoNue.Text.ToUpper();
-                                        Emails.Text = TxTCorreoN.Text.ToUpper();
-                                        Clasifica.Text = Clasificacion;
-                                        IdAbrevi.Text = IdAbreviatura;
-                                 
-
-
+                                        cmd.Parameters.Add(new SqlParameter("@IdSubFondo", IdSubFondo));
+                                        cmd.Parameters.Add(new SqlParameter("@UniAdmin", TxTNombreUniN.Text.ToUpper()));
+                                        cmd.Parameters.Add(new SqlParameter("@Tipo", IdTipo));
+                                        cmd.Parameters.Add(new SqlParameter("@Telefono", TxtTelefonoNue.Text.ToUpper()));
+                                        cmd.Parameters.Add(new SqlParameter("@EMail", TxTCorreoN.Text));
+                                        cmd.Parameters.Add(new SqlParameter("@Clasificacion", Clasificacion));
+                                        cmd.Parameters.Add(new SqlParameter("@IdAbreviatura", IdAbreviatura));
+                                        cmd.Parameters.Add(new SqlParameter("@IdEmpleado", IdEmpleado));
 
                                         SqlParameter ValorRetorno = new SqlParameter("@Comprobacion", SqlDbType.Int);
                                         ValorRetorno.Direction = ParameterDirection.Output;
                                         cmd.Parameters.Add(ValorRetorno);
+
+                                        SqlParameter IdUniParam = new SqlParameter("@IdUniInsertada", SqlDbType.Int);
+                                        IdUniParam.Direction = ParameterDirection.Output;
+                     
                                         cmd.ExecuteNonQuery();
+
+                                        Valor_Retorno_Insertar_Uni = Convert.ToInt32(ValorRetorno.Value);
+                                        int IdUni = Convert.ToInt32(IdUniParam.Value);
+
+                                        if (Distrito != 0 & IdUni != 0)
+                                        {
+                                            
+
+                                            cmd = new SqlCommand("SP_Insertar_Uni_UADistrito", cnn, lTransaccion);
+                                            cmd.CommandType = CommandType.StoredProcedure;
+                                            cmd.Parameters.Clear();
+
+                                            cmd.Parameters.Add(new SqlParameter("@IdUniAdmin", IdUni));
+                                            cmd.Parameters.Add(new SqlParameter("@IdDistrito", Distrito));
+
+                                            ValorRetorno = new SqlParameter("@Comprobacion", SqlDbType.Int);
+                                            ValorRetorno.Direction = ParameterDirection.Output;
+                                            cmd.ExecuteNonQuery();
+                                            cmd.Parameters.Add(ValorRetorno);
+                                            Valor_Retorno = Convert.ToInt32(ValorRetorno.Value);
+
+                                            if (Valor_Retorno == 1 & Valor_Retorno_Insertar_Uni ==1)
+                                            {
+                                                sucess = true;
+                                            }
+                                            else
+                                            {
+                                                sucess = false;
+                                            }
+
+                                        }
+
+
+
+                                        //cmd.ExecuteNonQuery();
 
 
                                         Valor_Retorno = Convert.ToInt32(ValorRetorno.Value);
-                                        if (Valor_Retorno == 1)
+
+                                        if(Valor_Retorno == 1)
+                                        {
                                             sucess = true;
-                                                
                                         }
-                                        catch(Exception ex)
+                                        else 
+                                        {
+                                            sucess = false;
+                                        }
+             
+
+                                    }
+                                    catch (Exception ex)
                                         {
                                             MostrarMensaje(ex.Message, "error", "Normal", "Incorrecto");
                                         }
@@ -338,12 +382,12 @@ namespace InventariosPJEH
                                             {
                                                 lTransaccion.Commit();
                                                 
-                                                MostrarMensaje("** Personal guardado correctamente **", "error", "Normal", "Incorrecto");
+                                                MostrarMensaje("** Unidad Administrativa guardada correctamente **", "error", "Normal", "Incorrecto");
                                                 DivNuevoReg.Visible = false;
                                                 BtnGuardar.Visible = false;
                                                 BtnCancelar.Visible = false;
                                                cnn.Close();
-                                                LimpiarRegistros();
+                                            LimpiarNuevoR();
                                                 
                                             }
                                             else 
