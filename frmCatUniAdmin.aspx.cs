@@ -301,101 +301,100 @@ namespace InventariosPJEH
                             {
                                 if(TxtTelefonoNue.Text != "")
                                 {
-                                    if(TxTCorreoN.Text != "" && ValidarFormatoCorreo(TxTCorreoN.Text))
+                                    if (TxTCorreoN.Text != "")
                                     {
-                                        if (IdUniAdminTxt.Text.Equals("-1"))
+                                        if (ValidarFormatoCorreo(TxTCorreoN.Text))
                                         {
-                                            if (BdUnidadAdmin.InsertarUniAdmin(Convert.ToInt32(ddlTipoNuevo.SelectedValue),
-                                                         Convert.ToInt32(ddlDistritoNuevo.SelectedValue),
-                                                         Convert.ToInt32(ddlSubFondoN.SelectedValue),
-                                                        ddlTipoSub.SelectedValue,
-                                                        TxTNombreUniN.Text,
-                                                        TxtTelefonoNue.Text,
-                                                        TxTCorreoN.Text
-                                                         ))
+                                            if (IdUniAdminTxt.Text.Equals("-1"))
                                             {
-                                                MostrarMensaje("Unidad Administrativa generada de forma correcta", "info", "Normal", "ModificacionCorrecta");
-                                                if (DivResultados.Visible)
+                                                if (BdUnidadAdmin.InsertarUniAdmin(Convert.ToInt32(ddlTipoNuevo.SelectedValue),
+                                                             Convert.ToInt32(ddlDistritoNuevo.SelectedValue),
+                                                             Convert.ToInt32(ddlSubFondoN.SelectedValue),
+                                                            ddlTipoSub.SelectedValue,
+                                                            TxTNombreUniN.Text,
+                                                            TxtTelefonoNue.Text,
+                                                            TxTCorreoN.Text
+                                                             ))
                                                 {
-                                                    BuscarTipo();
+                                                    MostrarMensaje("Unidad Administrativa generada de forma correcta", "info", "Normal", "ModificacionCorrecta");
+                                                    if (DivResultados.Visible)
+                                                    {
+                                                        BuscarTipo();
+                                                    }
+                                                    LimpiarNuevoR();
+                                                    DivNuevoReg.Visible = false;
+                                                    DivUniAdminPres.Visible = true;
+                                                }
+                                                else
+                                                {
+                                                    MostrarMensaje("** Error en Base de Datos **", "error", "Normal", "Incorrecto");
                                                 }
                                             }
                                             else
                                             {
-                                                MostrarMensaje("** Error en Base de Datos **", "error", "Normal", "Incorrecto");
+                                                if (BdUnidadAdmin.ActualizarUniAdmin(int.Parse(IdUniAdminTxt.Text),
+                                                            Convert.ToInt32(ddlTipoNuevo.SelectedValue),
+                                                             Convert.ToInt32(ddlDistritoNuevo.SelectedValue),
+                                                             Convert.ToInt32(ddlSubFondoN.SelectedValue),
+                                                            ddlTipoSub.SelectedValue,
+                                                            TxTNombreUniN.Text.Trim(),
+                                                            TxtTelefonoNue.Text,
+                                                            TxTCorreoN.Text
+                                                             ))
+                                                {
+                                                    MostrarMensaje("Unidad Administrativa actualizada de forma correcta", "info", "Normal", "ModificacionCorrecta");
+
+                                                    BuscarTipo();
+                                                    LimpiarNuevoR();
+                                                    DivNuevoReg.Visible = false;
+                                                    DivUniAdminPres.Visible = true;
+                                                }
+                                                else
+                                                {
+                                                    MostrarMensaje("** Error en Base de Datos **", "error", "Normal", "Incorrecto");
+                                                }
                                             }
                                         }
                                         else
                                         {
-                                            if (BdUnidadAdmin.ActualizarUniAdmin(int.Parse(IdUniAdminTxt.Text),
-                                                        Convert.ToInt32(ddlTipoNuevo.SelectedValue),
-                                                         Convert.ToInt32(ddlDistritoNuevo.SelectedValue),
-                                                         Convert.ToInt32(ddlSubFondoN.SelectedValue),
-                                                        ddlTipoSub.SelectedValue,
-                                                        TxTNombreUniN.Text.Trim(),
-                                                        TxtTelefonoNue.Text,
-                                                        TxTCorreoN.Text
-                                                         ))
-                                            {
-                                                MostrarMensaje("Unidad Administrativa actualizada de forma correcta", "info", "Normal", "ModificacionCorrecta");
-                                                                                                
-                                                BuscarTipo();                                                
-                                            }
-                                            else
-                                            {
-                                                MostrarMensaje("** Error en Base de Datos **", "error", "Normal", "Incorrecto");
-                                            }
-                                        }                                        
+                                            MostrarMensaje("** Correo inválido **", "error", "Normal", "Incorrecto");
+                                        }
                                     }
                                     else
                                     {
-                                        MostrarMensaje("** Seleccione el correo **", "error", "Normal", "Incorrecto");
+                                        MostrarMensaje("** Introduzca correo **", "error", "Normal", "Incorrecto");
                                     }
                                 }
                                 else 
                                 {
-                                    MostrarMensaje("** Seleccione telefono **", "error", "Normal", "Incorrecto");
+                                    MostrarMensaje("** Introduzca Teléfono **", "error", "Normal", "Incorrecto");
                                 }
                             }
                             else 
                             {
-                                MostrarMensaje("** Seleccione nombre **", "error", "Normal", "Incorrecto");
+                                MostrarMensaje("** Introduzca Nombre **", "error", "Normal", "Incorrecto");
                             }
                         }
                         else
                         {
-                            MostrarMensaje("** Seleccione sub **", "error", "Normal", "Incorrecto");
+                            MostrarMensaje("** Seleccione Tipo **", "error", "Normal", "Incorrecto");
                         }
                     }
                     else 
                     {
-                        MostrarMensaje("** Seleccione fondo **", "error", "Normal", "Incorrecto");
+                        MostrarMensaje("** Seleccione Subfondo **", "error", "Normal", "Incorrecto");
                     }
                 }
                 else 
                 {
-                    MostrarMensaje("** Seleccione dist **", "error", "Normal", "Incorrecto");
+                    MostrarMensaje("** Seleccione Distrito **", "error", "Normal", "Incorrecto");
                 }
             }
             else
             {
-                MostrarMensaje("** Seleccione clas **", "error", "Normal", "Incorrecto");
+                MostrarMensaje("** Seleccione Clasificación **", "error", "Normal", "Incorrecto");
             }
-        }        
-
-        protected void btnEditar_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                DivNuevoReg.Visible = true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-
+        }                
 
         protected void GridBuscar_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
@@ -415,7 +414,19 @@ namespace InventariosPJEH
            
         }
 
-            protected void GridModificar_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void btnEditar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DivNuevoReg.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        protected void GridModificar_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             int index = Convert.ToInt32(e.CommandArgument);
             GridViewRow RowSelecionada = GridTabla.Rows[index];
@@ -424,7 +435,14 @@ namespace InventariosPJEH
             {
                 if (unidad.IdDistrito != -1)
                 {
+                    LblDistritoN.Visible = true;
+                    ddlDistritoNuevo.Visible = true;
                     ddlDistritoNuevo.SelectedValue = unidad.IdDistrito.ToString();
+                }
+                else
+                {
+                    LblDistritoN.Visible = false;
+                    ddlDistritoNuevo.Visible = false;
                 }                
                 IdUniAdminTxt.Text = unidad.IdUniAdmin.ToString();
                 ddlTipoNuevo.SelectedValue = unidad.IdClasificacion.ToString();

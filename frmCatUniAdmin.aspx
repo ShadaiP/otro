@@ -77,7 +77,7 @@
                                     <asp:BoundField DataField="DescClasific" HeaderText="Clasificación"/>                               
                                     <asp:TemplateField HeaderText="Editar" ItemStyle-Width="50">
                                         <ItemTemplate>
-                                            <asp:ImageButton runat="server" ID="btnEditar" Width="16" Height="16" ImageUrl="~/Imagenes/Generales/editar.png" 
+                                            <asp:ImageButton runat="server" ID="btnEditar" Width="30" Height="30" ImageUrl="~/Imagenes/Generales/editar.png" 
                                                 CommandName="Editar" OnClick="btnEditar_Click" CommandArgument='<%# Container.DataItemIndex.ToString() %>' />
                                         </ItemTemplate>
                                         <ItemStyle Width="50px" />
