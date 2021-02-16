@@ -51,13 +51,22 @@ namespace InventariosPJEH
         protected global::System.Web.UI.WebControls.HiddenField Rowindex;
 
         /// <summary>
-        /// Control LabelTipo.
+        /// Control DivUniAdminPres.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LabelTipo;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl DivUniAdminPres;
+
+        /// <summary>
+        /// Control LabelClasif.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LabelClasif;
 
         /// <summary>
         /// Control ddlTipo.
@@ -67,6 +76,15 @@ namespace InventariosPJEH
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlTipo;
+
+        /// <summary>
+        /// Control ddlDistritoDiv.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow ddlDistritoDiv;
 
         /// <summary>
         /// Control LabelDistrito.
@@ -139,6 +157,15 @@ namespace InventariosPJEH
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl lgNuevoR;
+
+        /// <summary>
+        /// Control IdUniAdminTxt.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox IdUniAdminTxt;
 
         /// <summary>
         /// Control LblTipoA.

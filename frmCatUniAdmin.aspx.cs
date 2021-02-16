@@ -13,27 +13,33 @@ using System.Configuration;
 using System.Threading.Tasks;
 using InventariosPJEH.CNegocios;
 using System.Data.Odbc;
+using System.Text.RegularExpressions;
 
 namespace InventariosPJEH
 {
     public partial class frmCatUniAdmin : System.Web.UI.Page
-    {
-        CUnidadAdmin obJN = new CUnidadAdmin();
-        BdUnidadAdmin obJE = new BdUnidadAdmin();
-
+    {        
+        private static List<CUnidadAdmin> datosUnis;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Request.Form["__EVENTTARGET"] == "AccionVacio")
+            if (Request.Form["__EVENTTARGET"] == "AccionEliminarr")
+            {
+                //if(!IdUniAdminTxt.Text.Equals(""))
+                GridBuscar_RowDeleting(this, new GridViewDeleteEventArgs(Int32.Parse(IdUniAdminTxt.Text)));
+            }
+            else if (Request.Form["__EVENTTARGET"] == "AccionVacio")
             {
                 Rowindex.Value = string.Empty;
+
             }
-            if(!this.IsPostBack)
+            if (!this.IsPostBack)
             {
                 IniciarLlenadoDropTipo();
                 IniciarLlenadoUniNuevo();
                 IniciarLlenadoSub();
                 IniciarLlenadoTipo();
+                datosUnis = new List<CUnidadAdmin>();
             }
           
         }
@@ -104,7 +110,14 @@ namespace InventariosPJEH
                 ddlDistrito.DataValueField = "IdDistrito";
                 ddlDistrito.DataBind();
                 ddlDistrito.Items.Insert(0, new ListItem("Seleccionar", "0"));
-                
+
+                this.ddlDistritoNuevo.Visible = true;
+                this.LblDistritoN.Visible = true;
+                ddlDistritoNuevo.DataSource = Datoos;
+                ddlDistritoNuevo.DataTextField = "Distrito";
+                ddlDistritoNuevo.DataValueField = "IdDistrito";
+                ddlDistritoNuevo.DataBind();
+                ddlDistritoNuevo.Items.Insert(0, new ListItem("Seleccionar", "0"));
 
             }
             else 
@@ -140,13 +153,14 @@ namespace InventariosPJEH
 
                 if (ddlTipo.SelectedIndex != 0 & ddlDistrito.SelectedIndex != 0)
                 {
-                    GridTabla.DataSource = BdUnidadAdmin.ConsultarGbUD(DescClasific, Distrito);
-                    GridTabla.DataBind();
-                    
+                    datosUnis = BdUnidadAdmin.ConsultarGbUD(DescClasific, Distrito);
+                    GridTabla.DataSource = datosUnis;
+                    GridTabla.DataBind();                    
                 }
                 else
                 {
-                    GridTabla.DataSource = BdUnidadAdmin.ConsultarGbUnidad(DescClasific);
+                    datosUnis = BdUnidadAdmin.ConsultarGbUnidad(DescClasific);
+                    GridTabla.DataSource = datosUnis;
                     GridTabla.DataBind();
 
                     if (GridTabla.Rows.Count == 0)
@@ -166,17 +180,21 @@ namespace InventariosPJEH
             }
         }
 
+        protected void btnEditar_Click(object sender, ImageClickEventArgs e)
+        {
+            DivNuevoReg.Visible = true;
+            DivUniAdminPres.Visible = false;
+        }
 
+            /// <summary>
+            /// Mensajes de error o confirmacion
+            /// </summary>
+            /// <param name="Mensaje"></param>
+            /// <param name="Tipo"></param>
+            /// <param name="TipoFuncion"></param>
+            /// <param name="ClaveMsj"></param>
 
-        /// <summary>
-        /// Mensajes de error o confirmacion
-        /// </summary>
-        /// <param name="Mensaje"></param>
-        /// <param name="Tipo"></param>
-        /// <param name="TipoFuncion"></param>
-        /// <param name="ClaveMsj"></param>
-
-        protected void MostrarMensaje(string Mensaje, string Tipo, string TipoFuncion, string ClaveMsj)
+            protected void MostrarMensaje(string Mensaje, string Tipo, string TipoFuncion, string ClaveMsj)
         {
             string Msj = "";
             if (TipoFuncion == "Normal")
@@ -229,6 +247,7 @@ namespace InventariosPJEH
 
         protected void BtnNuevoR_Click(object sender, EventArgs e)
         {
+            IdUniAdminTxt.Text = "-1";
             if (DivNuevoReg.Visible == false)
             {
                 LimpiarRegistros();
@@ -246,13 +265,34 @@ namespace InventariosPJEH
             }
         }
 
+        private Boolean ValidarFormatoCorreo(String email)
+        {
+            String expresion;
+            expresion = "\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
+            if (Regex.IsMatch(email, expresion))
+            {
+                if (Regex.Replace(email, expresion, String.Empty).Length == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
         protected void BtnGuardar_Click(object sender, EventArgs e)
         {
 
-            if (ddlTipoNuevo.SelectedIndex !=0)
+            if (ddlTipoNuevo.SelectedIndex != 0) 
             {
-               /* if(ddlDistritoNuevo.SelectedIndex !=0)
-                {*/
+               if(!ddlTipoNuevo.SelectedValue.Equals("2") || (ddlTipoNuevo.SelectedValue.Equals("2") && ddlDistritoNuevo.SelectedIndex != 0))
+                {
                     if(ddlSubFondoN.SelectedIndex !=0)
                     {
                         if(ddlTipoSub.SelectedIndex !=0)
@@ -261,175 +301,139 @@ namespace InventariosPJEH
                             {
                                 if(TxtTelefonoNue.Text != "")
                                 {
-                                    if(TxTCorreoN.Text != "")
+                                    if(TxTCorreoN.Text != "" && ValidarFormatoCorreo(TxTCorreoN.Text))
                                     {
-                                    string IdSubFondo = Convert.ToString(ddlSubFondoN.SelectedValue);
-                                    string IdAbreviatura = Convert.ToString(ddlTipoNuevo.SelectedValue);
-                                    string Clasificacion = "";
-                                    int Distrito = Convert.ToInt32(ddlDistritoNuevo.SelectedValue);
-                                    string IdTipo = Convert.ToString(ddlTipoSub.SelectedValue);
-                                    int IdEmpleado = 0;
-
-
-                                    if (IdAbreviatura != "")
-                                    {
-                                        SqlConnection cnn3 = new SqlConnection(CConexion.Obtener());
-                                        cnn3.Open();
-                                        string consultar = "select IdAbreviatura, Abreviatura from Abreviaturas  where IdAbreviatura =" + IdAbreviatura;
-                                        SqlCommand cmd2 = new SqlCommand(consultar, cnn3);
-                                        using (var rd = cmd2.ExecuteReader())
+                                        if (IdUniAdminTxt.Text.Equals("-1"))
                                         {
-                                            while (rd.Read())
+                                            if (BdUnidadAdmin.InsertarUniAdmin(Convert.ToInt32(ddlTipoNuevo.SelectedValue),
+                                                         Convert.ToInt32(ddlDistritoNuevo.SelectedValue),
+                                                         Convert.ToInt32(ddlSubFondoN.SelectedValue),
+                                                        ddlTipoSub.SelectedValue,
+                                                        TxTNombreUniN.Text,
+                                                        TxtTelefonoNue.Text,
+                                                        TxTCorreoN.Text
+                                                         ))
                                             {
-                                                Clasificacion = rd["Abreviatura"].ToString();
-
-                                            }
-                                            cnn3.Close();
-                                        }
-
-                                    }
-
-                                    SqlConnection cnn = new SqlConnection(CConexion.Obtener());
-                                    bool sucess = false;
-                                    SqlTransaction lTransaccion = null;
-                                    int Valor_Retorno = 0;
-                                    int Valor_Retorno_Insertar_Uni = 0;
-
-                                    try
-                                    {
-                                       
-                                        cnn.Open();
-                                        lTransaccion = cnn.BeginTransaction(System.Data.IsolationLevel.Serializable);
-                                        SqlCommand cmd = new SqlCommand("SP_Insertar_UniAdmn", cnn, lTransaccion);
-
-                                        cmd.CommandType = CommandType.StoredProcedure;
-                                        cmd.Parameters.Clear();
-
-                                        cmd.Parameters.Add(new SqlParameter("@IdSubFondo", IdSubFondo));
-                                        cmd.Parameters.Add(new SqlParameter("@UniAdmin", TxTNombreUniN.Text.ToUpper()));
-                                        cmd.Parameters.Add(new SqlParameter("@Tipo", IdTipo));
-                                        cmd.Parameters.Add(new SqlParameter("@Telefono", TxtTelefonoNue.Text.ToUpper()));
-                                        cmd.Parameters.Add(new SqlParameter("@EMail", TxTCorreoN.Text));
-                                        cmd.Parameters.Add(new SqlParameter("@Clasificacion", Clasificacion));
-                                        cmd.Parameters.Add(new SqlParameter("@IdAbreviatura", IdAbreviatura));
-                                        cmd.Parameters.Add(new SqlParameter("@IdEmpleado", IdEmpleado));
-
-                                        SqlParameter ValorRetorno = new SqlParameter("@Comprobacion", SqlDbType.Int);
-                                        ValorRetorno.Direction = ParameterDirection.Output;
-                                        cmd.Parameters.Add(ValorRetorno);
-
-                                        SqlParameter IdUniParam = new SqlParameter("@IdUniInsertada", SqlDbType.Int);
-                                        IdUniParam.Direction = ParameterDirection.Output;
-                     
-                                        cmd.ExecuteNonQuery();
-
-                                        Valor_Retorno_Insertar_Uni = Convert.ToInt32(ValorRetorno.Value);
-                                        int IdUni = Convert.ToInt32(IdUniParam.Value);
-
-                                        if (Distrito != 0 & IdUni != 0)
-                                        {
-                                            
-
-                                            cmd = new SqlCommand("SP_Insertar_Uni_UADistrito", cnn, lTransaccion);
-                                            cmd.CommandType = CommandType.StoredProcedure;
-                                            cmd.Parameters.Clear();
-
-                                            cmd.Parameters.Add(new SqlParameter("@IdUniAdmin", IdUni));
-                                            cmd.Parameters.Add(new SqlParameter("@IdDistrito", Distrito));
-
-                                            ValorRetorno = new SqlParameter("@Comprobacion", SqlDbType.Int);
-                                            ValorRetorno.Direction = ParameterDirection.Output;
-                                            cmd.ExecuteNonQuery();
-                                            cmd.Parameters.Add(ValorRetorno);
-                                            Valor_Retorno = Convert.ToInt32(ValorRetorno.Value);
-
-                                            if (Valor_Retorno == 1 & Valor_Retorno_Insertar_Uni ==1)
-                                            {
-                                                sucess = true;
+                                                MostrarMensaje("Unidad Administrativa generada de forma correcta", "info", "Normal", "ModificacionCorrecta");
+                                                if (DivResultados.Visible)
+                                                {
+                                                    BuscarTipo();
+                                                }
                                             }
                                             else
                                             {
-                                                sucess = false;
+                                                MostrarMensaje("** Error en Base de Datos **", "error", "Normal", "Incorrecto");
                                             }
-
                                         }
-
-
-
-                                        //cmd.ExecuteNonQuery();
-
-
-                                        Valor_Retorno = Convert.ToInt32(ValorRetorno.Value);
-
-                                        if(Valor_Retorno == 1)
+                                        else
                                         {
-                                            sucess = true;
-                                        }
-                                        else 
-                                        {
-                                            sucess = false;
-                                        }
-             
-
-                                    }
-                                    catch (Exception ex)
-                                        {
-                                            MostrarMensaje(ex.Message, "error", "Normal", "Incorrecto");
-                                        }
-                                        finally
-                                        {
-                                            if(sucess)
+                                            if (BdUnidadAdmin.ActualizarUniAdmin(int.Parse(IdUniAdminTxt.Text),
+                                                        Convert.ToInt32(ddlTipoNuevo.SelectedValue),
+                                                         Convert.ToInt32(ddlDistritoNuevo.SelectedValue),
+                                                         Convert.ToInt32(ddlSubFondoN.SelectedValue),
+                                                        ddlTipoSub.SelectedValue,
+                                                        TxTNombreUniN.Text.Trim(),
+                                                        TxtTelefonoNue.Text,
+                                                        TxTCorreoN.Text
+                                                         ))
                                             {
-                                                lTransaccion.Commit();
-                                                
-                                                MostrarMensaje("** Unidad Administrativa guardada correctamente **", "error", "Normal", "Incorrecto");
-                                                DivNuevoReg.Visible = false;
-                                                BtnGuardar.Visible = false;
-                                                BtnCancelar.Visible = false;
-                                               cnn.Close();
-                                            LimpiarNuevoR();
-                                                
+                                                MostrarMensaje("Unidad Administrativa actualizada de forma correcta", "info", "Normal", "ModificacionCorrecta");
+                                                                                                
+                                                BuscarTipo();                                                
                                             }
-                                            else 
+                                            else
                                             {
-                                                lTransaccion.Rollback();
-                                            cnn.Close();
+                                                MostrarMensaje("** Error en Base de Datos **", "error", "Normal", "Incorrecto");
                                             }
-                                        }
+                                        }                                        
                                     }
                                     else
                                     {
-                                        MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+                                        MostrarMensaje("** Seleccione el correo **", "error", "Normal", "Incorrecto");
                                     }
                                 }
                                 else 
                                 {
-                                    MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+                                    MostrarMensaje("** Seleccione telefono **", "error", "Normal", "Incorrecto");
                                 }
                             }
                             else 
                             {
-                                MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+                                MostrarMensaje("** Seleccione nombre **", "error", "Normal", "Incorrecto");
                             }
                         }
                         else
                         {
-                            MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+                            MostrarMensaje("** Seleccione sub **", "error", "Normal", "Incorrecto");
                         }
                     }
                     else 
                     {
-                        MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+                        MostrarMensaje("** Seleccione fondo **", "error", "Normal", "Incorrecto");
                     }
-                /*}
+                }
                 else 
                 {
-                    MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
-                }*/
+                    MostrarMensaje("** Seleccione dist **", "error", "Normal", "Incorrecto");
+                }
             }
             else
             {
-                MostrarMensaje("** Seleccione el campo nómina **", "error", "Normal", "Incorrecto");
+                MostrarMensaje("** Seleccione clas **", "error", "Normal", "Incorrecto");
+            }
+        }        
+
+        protected void btnEditar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DivNuevoReg.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
+        protected void GridBuscar_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            if (String.IsNullOrEmpty(Rowindex.Value))
+            {
+                Rowindex.Value = e.RowIndex.ToString();
+                MostrarMensaje("Prueba", "info", "NotificacionEliminar", "Inicio");
+            }
+            else
+            {
+                int n = e.RowIndex;
+                BdUnidadAdmin.EliminarUnidad(e.RowIndex);
+                BuscarTipo();
+                MostrarMensaje("** Unidad Administrativa eliminada **", "error", "Normal", "Incorrecto");
+                Rowindex.Value = "";
+            }
+           
+        }
+
+            protected void GridModificar_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            int index = Convert.ToInt32(e.CommandArgument);
+            GridViewRow RowSelecionada = GridTabla.Rows[index];
+            CUnidadAdmin unidad = datosUnis.Find(x => x.UniAdmin == Page.Server.HtmlDecode(RowSelecionada.Cells[0].Text));
+            if (unidad != null)
+            {
+                if (unidad.IdDistrito != -1)
+                {
+                    ddlDistritoNuevo.SelectedValue = unidad.IdDistrito.ToString();
+                }                
+                IdUniAdminTxt.Text = unidad.IdUniAdmin.ToString();
+                ddlTipoNuevo.SelectedValue = unidad.IdClasificacion.ToString();
+                ddlSubFondoN.SelectedValue = unidad.IdSubFondo.ToString();
+                ddlTipoSub.SelectedValue = unidad.Tipo;
+                TxTNombreUniN.Text = unidad.UniAdmin;
+                TxtTelefonoNue.Text = unidad.Telefono;
+                TxTCorreoN.Text = unidad.Email;
+
             }
         }
 
@@ -437,20 +441,10 @@ namespace InventariosPJEH
         {
            LimpiarNuevoR();
             DivNuevoReg.Visible = false;
-            BtnGuardar.Visible = false;
-            BtnCancelar.Visible = false;
+            DivUniAdminPres.Visible = true;
         }
 
-        public void EliminarUnidad()
-        {
-            SqlConnection cnn = new SqlConnection(CConexion.Obtener());
-            SqlCommand cmd = new SqlCommand("SP_Eliminar_UniAdmin", cnn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            //cmd.Parameters.AddWithValue("@IdUniAdmin", obJE.IDUniAdmin);
-            cnn.Open();
-            cmd.ExecuteNonQuery();
-            cnn.Close();
-        }
+        
 
     }
 

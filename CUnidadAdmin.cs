@@ -16,11 +16,14 @@ namespace InventariosPJEH.CNegocios
         public string Email { get; set; }
         public string Telefono { get; set; }
         public int IDUniAdmin { get; set; }
+        public int IdDistrito { get; set; }
+        public String Distrito { get; set; }
 
         public string Abreviatura { get; set; }
 
         public string Clasificacion { get; set; }
         public string DescClasific { get; set; }
+        public int IdClasificacion { get; set; }
         public int IdEmpleado { get; set; }
         
 }
